@@ -15,19 +15,19 @@
 // ---------------------- Constructeurs ----------------------
 
 // Constructeur avec un seul bound
-Problem::Problem(const FloatVar* bounds,
+Problem::Problem(const std::vector<double>& lb,
+                 const std::vector<double>& ub,
                  const std::string &minmax,
                  objective_function_t objective_function)
-    : minmax(minmax), obj_func(objective_function), name("P"),
+    : lb(lb), ub(ub),minmax(minmax), obj_func(objective_function), name("P"),
       n_objs(1), n_dims(0), save_population(false)
 {
-    set_bounds(bounds);
     set_functions();
 }
 
-std::vector<FloatVar*> Problem::get_bounds() const {
-    return _bounds;
-}
+// std::vector<FloatVar*> Problem::get_bounds() const {
+//     return _bounds;
+// }
 
 // void Problem::set_bounds(const BaseVar* bounds) {
 //     _bounds = bounds;
@@ -38,22 +38,21 @@ std::vector<FloatVar*> Problem::get_bounds() const {
 //         ub.insert(ub.end(), bound->get_ub().begin(), bound->get_ub().end());
 //     }
 // }
-void Problem::set_bounds(const FloatVar* bounds) {
-    std::vector<FloatVar*> bounds_list;
-    bounds_list.push_back(const_cast<FloatVar*>(bounds));
-    this->_bounds = bounds_list;
-    this->lb.clear();
-    this->ub.clear();
-    for (const auto& bound : this->_bounds) {
-        for (const auto& lb : bound->get_lb()) {
-            this->lb.push_back(lb);
-        }
-        for (const auto& ub : bound->get_ub()) {
-            this->ub.push_back(ub);
-        }
-    }
-}
-
+// void Problem::set_bounds(const FloatVar* bounds) {
+//     std::vector<FloatVar*> bounds_list;
+//     bounds_list.push_back(const_cast<FloatVar*>(bounds));
+//     this->_bounds = bounds_list;
+//     this->lb.clear();
+//     this->ub.clear();
+//     for (const auto& bound : this->_bounds) {
+//         for (const auto& lb : bound->get_lb()) {
+//             this->lb.push_back(lb);
+//         }
+//         for (const auto& ub : bound->get_ub()) {
+//             this->ub.push_back(ub);
+//         }
+//     }
+// }
 
 // void Problem::set_seed(int seed) {
 //     this->seed = seed;
@@ -70,25 +69,21 @@ void Problem::set_functions() {
 }
 
 std::vector<double> Problem::generate_solution() const {
-    std::vector<std::vector<double>> x;
-    for (const auto& var : this->_bounds) {
-        auto generated = var->generate();
-        x.push_back(generated);
-    }
-    std::vector<double> x_new;
-    for (size_t i = 0; i < this->_bounds.size(); ++i) {
-        auto encoded = this->_bounds[i]->encode(std::vector<double>{x[i]});
-        x_new.insert(x_new.end(), encoded.begin(), encoded.end());
-    }
+    std::vector<double> x_new(lb.size());
+    std::random_device rd;
+    std::mt19937 generator(rd());
+        // Générer les valeurs directement dans la plage [lb, ub]
+        for (size_t i = 0; i < lb.size(); ++i) {
+            std::uniform_real_distribution<double> dist(lb[i], ub[i]);
+            x_new[i] = dist(generator);
+        }
     return x_new;
 }
+
 std::vector<double> Problem::correct_solution(const std::vector<double>& x) const {
-    std::vector<double> x_new;
-    size_t n_vars = 0;
-    for (size_t i = 0; i < this->_bounds.size(); ++i) {
-        auto corrected = this->_bounds[i]->correct(std::vector<double>(x.begin() + n_vars, x.begin() + n_vars + this->_bounds[i]->n_vars));
-        x_new.insert(x_new.end(), corrected.begin(), corrected.end());
-        n_vars += this->_bounds[i]->n_vars;
+    std::vector<double> x_new(x.size());
+    for (size_t i = 0; i < x.size(); ++i) {
+        x_new[i] = std::clamp(x[i], lb[i], ub[i]);
     }
     return x_new;
 }

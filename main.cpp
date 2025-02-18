@@ -19,7 +19,8 @@ double objective_function(const std::vector<double>& solution) {
 
 
 struct ProblemDict {
-    std::shared_ptr<FloatVar> bounds;
+    std::vector<double>& lb;
+    std::vector<double>& ub;
     std::string minmax;
     std::function<double(const std::vector<double>&)> obj_func;
 };
@@ -28,7 +29,7 @@ int main() {
     std::vector<double> lb(30,-10);
     std::vector<double> ub(30,10);
     // --- Création du problem_dict exactement comme dans le script Python ---
-    Problem* problem= new Problem(new FloatVar(lb,ub),"min",objective_function);
+    Problem* problem= new Problem(lb,ub,"min",objective_function);
 
     // --- Instanciation du modèle OriginalABC avec epoch=1000, pop_size=50, n_limits=50 ---
     OriginalABC model(1000, 50, 50);

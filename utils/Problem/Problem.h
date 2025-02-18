@@ -10,8 +10,8 @@
 #include <string>
 #include <map>
 #include <variant>
-#include "../Space/BaseVar/BaseVar.h"
-#include "../Space/FloatVar/FloatVar.h"
+// #include "../Space/BaseVar/BaseVar.h"
+// #include "../Space/FloatVar/FloatVar.h"
 #include "../Target/Target.h"
 #include "../Problem/Problem.h"
 #include <functional>
@@ -21,18 +21,19 @@ public:
     using objective_function_t = std::function<double(const std::vector<double>&)>;
     // Constructeurs
     // Un seul bound (instance de BaseVar)
-    Problem(const FloatVar* bounds,
+    Problem(const std::vector<double>& lb,
+        const std::vector<double>& ub,
             const std::string &minmax = "min",
             objective_function_t objective_function = nullptr);
 
     //Destructeur
     virtual ~Problem() = default;
 
-    // Getter pour _bounds
-    std::vector<FloatVar*> get_bounds() const;
+    // // Getter pour _bounds
+    // std::vector<FloatVar*> get_bounds() const;
 
     // Setters
-    void set_bounds(const FloatVar* bounds);
+    // void set_bounds(const FloatVar* bounds);
     // void set_bounds(const std::vector<BaseVar*>& bounds);
     // void set_seed(int seed);
 
@@ -44,7 +45,7 @@ public:
     Target *get_target(const std::vector<double> &solution);
 
     // Variables membres
-    std::vector<FloatVar*> _bounds;
+    // std::vector<FloatVar*> _bounds;
     std::vector<double> lb;
     std::vector<double> ub;
     std::string minmax;
