@@ -9,9 +9,11 @@
 #include <algorithm>
 
 FloatVar::FloatVar(const std::vector<double> &lb, const std::vector<double> &ub, const std::string &name)
-    : BaseVar(name)
+    : name(name), n_vars(0), lb(lb), ub(ub)
 {
-    _set_bounds(lb, ub);
+    n_vars = static_cast<int>(lb.size());
+    std::random_device random;
+    generator = std::mt19937(random());
 }
 
 void FloatVar::_set_bounds(const std::vector<double> &lb, const std::vector<double> &ub) {

@@ -15,7 +15,7 @@
 // ---------------------- Constructeurs ----------------------
 
 // Constructeur avec un seul bound
-Problem::Problem(const BaseVar* bounds,
+Problem::Problem(const FloatVar* bounds,
                  const std::string &minmax,
                  objective_function_t objective_function)
     : minmax(minmax), obj_func(objective_function), name("P"),
@@ -25,7 +25,7 @@ Problem::Problem(const BaseVar* bounds,
     set_functions();
 }
 
-std::vector<BaseVar*> Problem::get_bounds() const {
+std::vector<FloatVar*> Problem::get_bounds() const {
     return _bounds;
 }
 
@@ -38,9 +38,9 @@ std::vector<BaseVar*> Problem::get_bounds() const {
 //         ub.insert(ub.end(), bound->get_ub().begin(), bound->get_ub().end());
 //     }
 // }
-void Problem::set_bounds(const BaseVar* bounds) {
-    std::vector<BaseVar*> bounds_list;
-    bounds_list.push_back(const_cast<BaseVar*>(bounds));
+void Problem::set_bounds(const FloatVar* bounds) {
+    std::vector<FloatVar*> bounds_list;
+    bounds_list.push_back(const_cast<FloatVar*>(bounds));
     this->_bounds = bounds_list;
     this->lb.clear();
     this->ub.clear();
