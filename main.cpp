@@ -2,7 +2,6 @@
 #include <vector>
 #include <memory>
 #include <functional>
-#include "utils/Space/FloatVar/FloatVar.h"
 #include "OriginalABC.h"
 #include "utils/Problem/Problem.h"
 #include "utils/Agent/Agent.h"

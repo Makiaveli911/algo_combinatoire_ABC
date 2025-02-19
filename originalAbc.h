@@ -1,7 +1,7 @@
 #ifndef ORIGINAL_ABC_H
 #define ORIGINAL_ABC_H
 
-#include "Optimizer.h"
+
 #include <vector>
 #include <string>
 #include <map>
