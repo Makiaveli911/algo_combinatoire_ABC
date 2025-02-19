@@ -30,13 +30,13 @@ public:
 
     void set_target(Target* new_target);
 
-    Target* get_target() const;
+    const Target *get_target() const;
     // Retourne une copie de l'agent
     Agent copy() const;
 
     // Attributs
     std::vector<double> solution;
-    Target* target;
+    const Target* target;
     int id;
 };
 

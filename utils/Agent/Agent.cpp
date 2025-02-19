@@ -9,11 +9,7 @@ int Agent::ID = 0;
 
 Agent::Agent(const std::vector<double>& solution,
              const Target* target)
-    : solution(solution)
-{
-    target = target;
-    id = increase();
-}
+    : solution(solution),target(target),id(increase()) {}
 
 int Agent::increase() {
     ID += 1;
@@ -28,7 +24,7 @@ void Agent::set_target(Target* new_target) {
     this->target = new_target;
 }
 
-Target *Agent::get_target() const {
+const Target *Agent::get_target() const {
     // Assurez-vous que l'objet target existe dans Agent
     return target;  // 'target' doit être un membre de Agent
 }

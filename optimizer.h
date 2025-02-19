@@ -21,11 +21,11 @@ public:
     Optimizer();
     virtual ~Optimizer();
 
-    void store_initial_best_worst(const Agent& best, const Agent& worst);
-    std::string get_name() const;
+    // void store_initial_best_worst(const Agent& best, const Agent& worst);
+    // std::string get_name() const;
     virtual void initialize_variables();
-    virtual void before_initialization(const std::vector<std::vector<double>>& starting_solutions = {});
-    void initialization();
+    // virtual void before_initialization(const std::vector<std::vector<double>>& starting_solutions = {});
+    void initialization(const std::vector<std::vector<double>>& starting_solutions = {});
     void after_initialization();
     virtual void evolve(int epoch) = 0;
     void check_problem(Problem* problem);
@@ -41,7 +41,7 @@ public:
     static std::vector<Agent*> get_sorted_population(std::vector<Agent*>& pop, const std::string& minmax = "min", bool return_index = false);
     std::vector<Agent*> generate_population(int pop_size);
     Agent* generate_agent(const std::vector<double>& solution = {});
-    Agent* generate_empty_agent(const std::vector<double> &solution = {});
+    // Agent* generate_empty_agent(const std::vector<double> &solution = {});
     Target* get_target(const std::vector<double>& solution, bool counted = true);
 
 protected:

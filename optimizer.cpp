@@ -10,6 +10,7 @@
 #include <future>
 #include <cmath>
 #include <functional>
+#include <iostream>
 
 // -------------------- Constructeur --------------------
 Optimizer::Optimizer()
@@ -18,72 +19,85 @@ Optimizer::Optimizer()
 
 Optimizer::~Optimizer() {}
 
-void Optimizer::store_initial_best_worst(const Agent& best, const Agent& worst) {
-    // Stocker la meilleure solution initiale
-    list_global_best.clear();
-    list_current_best.clear();
-    list_global_best_fit.clear();
-    list_current_best_fit.clear();
+// void Optimizer::store_initial_best_worst(const Agent& best, const Agent& worst) {
+//     // Stocker la meilleure solution initiale
+//     list_global_best.clear();
+//     list_current_best.clear();
+//     list_global_best_fit.clear();
+//     list_current_best_fit.clear();
+//
+//     list_global_best.push_back(best.copy());
+//     list_current_best.push_back(best.copy());
+//     list_global_best_fit.push_back(best.target->fitness());
+//     list_current_best_fit.push_back(best.target->fitness());
+//
+//     // Stocker la pire solution initiale
+//     list_global_worst.clear();
+//     list_current_worst.clear();
+//
+//     list_global_worst.push_back(worst.copy());
+//     list_current_worst.push_back(worst.copy());
+// }
 
-    list_global_best.push_back(best.copy());
-    list_current_best.push_back(best.copy());
-    list_global_best_fit.push_back(best.target->fitness());
-    list_current_best_fit.push_back(best.target->fitness());
-
-    // Stocker la pire solution initiale
-    list_global_worst.clear();
-    list_current_worst.clear();
-
-    list_global_worst.push_back(worst.copy());
-    list_current_worst.push_back(worst.copy());
-}
-
-std::string Optimizer::get_name() const {
-    return name;
-}
+// std::string Optimizer::get_name() const {
+//     return name;
+// }
 void Optimizer::initialize_variables() {
     // Implémentation minimale (ou complète selon vos besoins)
 }
-void Optimizer::before_initialization(const std::vector<std::vector<double>>& starting_solutions) {
-    if (starting_solutions.empty()) {
-        return;
-    } else if (starting_solutions.size() == pop_size && starting_solutions[0].size() == problem->n_dims) {
-        pop.clear();
+// void Optimizer::before_initialization(const std::vector<std::vector<double>>& starting_solutions) {
+//     if (starting_solutions.empty()) {
+//         return;
+//     } else if (starting_solutions.size() == pop_size && starting_solutions[0].size() == problem->n_dims) {
+//         pop.clear();
+//         for (const auto& solution : starting_solutions) {
+//             pop.push_back(generate_agent(solution));
+//         }
+//     } else {
+//         throw std::invalid_argument("Invalid starting_solutions. It should be a list of positions or a 2D matrix of positions only.");
+//     }
+// }
+
+void Optimizer::initialization(const std::vector<std::vector<double>>& starting_solutions ){
+    pop.clear(); // Toujours vider la population avant d'initialiser
+
+    if (!starting_solutions.empty() &&
+        starting_solutions.size() == pop_size &&
+        starting_solutions[0].size() == problem->n_dims) {
+        // Utiliser les solutions fournies
         for (const auto& solution : starting_solutions) {
             pop.push_back(generate_agent(solution));
         }
-    } else {
-        throw std::invalid_argument("Invalid starting_solutions. It should be a list of positions or a 2D matrix of positions only.");
-    }
+        } else {
+            // Générer une nouvelle population aléatoire
+            pop = generate_population(pop_size);
+        }
 }
 
 Agent* Optimizer::generate_agent(const std::vector<double>& solution) {
-    Agent* agent = generate_empty_agent(solution);
-    agent->set_target(get_target(agent->get_solution()));
-    return agent;
+    // Si la solution est vide, on en génère une nouvelle via `problem->generate_solution()`
+    //sinon on l'utilise telle quelle
+    std::vector<double> final_solution = solution.empty() ? problem->generate_solution() : solution;
+    // Crée un nouvel Agent avec la solution et son Target associé
+    return new Agent(final_solution, problem->get_target(final_solution));
 }
 
-Agent* Optimizer::generate_empty_agent(const std::vector<double> &solution) {
-    std::vector<double> final_solution = solution;
 
-    // Si aucune solution n'est fournie, en générer une nouvelle
-    if (solution.empty()) {
-        final_solution = problem->generate_solution();
-    }
 
-    return new Agent(final_solution);
-}
+// Agent* Optimizer::generate_empty_agent(const std::vector<double> &solution) {
+//
+//     // Si aucune solution n'est fournie, en générer une nouvelle
+//     if (solution.empty()) {
+//         final_solution = problem->generate_solution();
+//     }
+//
+//     return new Agent(final_solution);
+// }
 Target* Optimizer::get_target(const std::vector<double>& solution, bool counted) {
     if (counted) {
         nfe_counter++;
     }
     return problem->get_target(solution);
-}
-
-void Optimizer::initialization() {
-    if (pop.empty()) {
-        pop = generate_population(pop_size);
-    }
 }
 
 std::vector<Agent*> Optimizer::generate_population(int pop_size) {
@@ -103,7 +117,15 @@ void Optimizer::after_initialization() {
     g_worst = worst[0];
 
     // Stocker les meilleures et pires solutions initiales
-    store_initial_best_worst(*g_best, *g_worst);
+    // store_initial_best_worst(*g_best, *g_worst);
+    // Stocker les meilleures et pires solutions initiales directement ici
+    list_global_best = {best[0]->copy()};
+    list_current_best = {best[0]->copy()};
+    list_global_best_fit = {best[0]->target->fitness()};
+    list_current_best_fit = {best[0]->target->fitness()};
+
+    list_global_worst = {worst[0]->copy()};
+    list_current_worst = {worst[0]->copy()};
 }
 std::tuple<std::vector<Agent*>, std::vector<Agent*>, std::vector<Agent*>>
 Optimizer::get_special_agents(std::vector<Agent*>& pop, int n_best, int n_worst, const std::string& minmax) {
@@ -169,9 +191,7 @@ Agent* Optimizer::solve(Problem* problem, const std::vector<std::vector<double>>
     check_problem(problem);
 
     initialize_variables();
-
-    before_initialization(starting_solutions);
-    initialization();
+    initialization(starting_solutions);
     after_initialization();
 
     // Boucle principale d'évolution
