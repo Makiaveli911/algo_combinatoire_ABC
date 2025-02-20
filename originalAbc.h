@@ -21,10 +21,10 @@ public:
 
     void initialize_variables() ;
     void evolve(int epoch) ;
-    void initialization(const std::vector<std::vector<double>>& starting_solutions = {});
+    void initialization();
     void after_initialization();
     void check_problem(Problem* problem);
-    Agent* solve(Problem* problem = nullptr, const std::vector<std::vector<double>>& starting_solutions = {});
+    Agent* solve(Problem* problem = nullptr);
     std::pair<std::vector<Agent*>, Agent*> update_global_best_agent(std::vector<Agent*>& pop, bool save = true);
     std::vector<double> correct_solution(const std::vector<double>& solution) const;
     static bool compare_target(const Target* target_x, const Target* target_y, const std::string& minmax = "min");

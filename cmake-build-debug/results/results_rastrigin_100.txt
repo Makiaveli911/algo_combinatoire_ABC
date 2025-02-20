@@ -1,0 +1,12 @@
+Fonction: rastrigin, Dimension: 100, Exécution: 1, Fitness: 2326.75
+Fonction: rastrigin, Dimension: 100, Exécution: 2, Fitness: 2194.1
+Fonction: rastrigin, Dimension: 100, Exécution: 3, Fitness: 2262.22
+Fonction: rastrigin, Dimension: 100, Exécution: 4, Fitness: 2156.83
+Fonction: rastrigin, Dimension: 100, Exécution: 5, Fitness: 2290.85
+Fonction: rastrigin, Dimension: 100, Exécution: 6, Fitness: 2238.83
+Fonction: rastrigin, Dimension: 100, Exécution: 7, Fitness: 2196.12
+Fonction: rastrigin, Dimension: 100, Exécution: 8, Fitness: 2242.85
+Fonction: rastrigin, Dimension: 100, Exécution: 9, Fitness: 2293.49
+Fonction: rastrigin, Dimension: 100, Exécution: 10, Fitness: 2282.64
+Fonction: rastrigin, Dimension: 100, Fitness Moyenne sur 10 exécutions: 2248.47
+Fonction: rastrigin, Dimension: 100, Écart Type sur 10 exécutions: 50.5246

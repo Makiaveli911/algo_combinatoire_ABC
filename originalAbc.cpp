@@ -24,6 +24,9 @@ void OriginalABC::evolve(int epoch) {
     std::uniform_int_distribution<int> int_dist(0, pop_size - 1);
 
     // Phase des abeilles employées
+    //Ici, chaque abeille employée génère une nouvelle solution en modifiant sa position actuelle
+    //en fonction d'une autre abeille sélectionnée aléatoirement (rdx). Si la nouvelle solution
+    //est meilleure, elle remplace l'ancienne sinon, le compteur d'échecs (trials) est incrémenté.
     for (int idx = 0; idx < pop_size; ++idx) {
         int rdx;
         do {
@@ -50,6 +53,10 @@ void OriginalABC::evolve(int epoch) {
     }
 
     // Phase des abeilles spectatrices
+    //Les abeilles spectatrices évaluent les solutions des abeilles employées
+    //et choisissent lesquelles explorer davantage en utilisant une sélection
+    //par roulette (get_index_roulette_wheel_selection). Elles génèrent ensuite
+    //de nouvelles solutions de manière similaire aux abeilles employées.
     std::vector<double> employed_fits;
     for (auto* agent : pop) {
         employed_fits.push_back(agent->target->fitness());
@@ -82,6 +89,9 @@ void OriginalABC::evolve(int epoch) {
     }
 
     // Phase des abeilles éclaireuses (Scout Bees)
+    //Si une solution n'a pas été améliorée après un certain nombre d'essais (n_limits),
+    //elle est remplacée par une nouvelle solution générée aléatoirement, simulant le
+    //comportement des abeilles éclaireuses qui recherchent de nouvelles sources de nourriture.
     for (int idx = 0; idx < pop_size; ++idx) {
         if (trials[idx] >= n_limits) {
             pop[idx] = generate_agent();
@@ -90,21 +100,22 @@ void OriginalABC::evolve(int epoch) {
     }
 }
 
-void OriginalABC::initialization(const std::vector<std::vector<double>>& starting_solutions ){
+void OriginalABC::initialization(){
     pop.clear(); // Toujours vider la population avant d'initialiser
-
-    if (!starting_solutions.empty() &&
-        starting_solutions.size() == pop_size &&
-        starting_solutions[0].size() == problem->n_dims) {
-        // Utiliser les solutions fournies
-        for (const auto& solution : starting_solutions) {
-            pop.push_back(generate_agent(solution));
-        }
-        } else {
-            // Générer une nouvelle population aléatoire
-            pop = generate_population(pop_size);
-        }
+    pop.resize(pop_size);
+    for (auto& agent : pop) {
+        agent = generate_agent();
+    }
 }
+// std::vector<Agent*> OriginalABC::generate_population(int pop_size) {
+//
+//     std::vector<Agent*> pop(pop_size);
+//
+//     for (auto& agent : pop) {
+//         agent = generate_agent();
+//     }
+//     return pop;
+// }
 
 Agent* OriginalABC::generate_agent(const std::vector<double>& solution) {
     // Si la solution est vide, on en génère une nouvelle via `problem->generate_solution()`
@@ -119,15 +130,7 @@ Target* OriginalABC::get_target(const std::vector<double>& solution, bool counte
     }
     return problem->get_target(solution);
 }
-std::vector<Agent*> OriginalABC::generate_population(int pop_size) {
-    pop_size = (pop_size > 0) ? pop_size : this->pop_size;
-    std::vector<Agent*> pop(pop_size);
 
-    for (auto& agent : pop) {
-        agent = generate_agent();
-    }
-    return pop;
-}
 
 void OriginalABC::after_initialization() {
     auto [pop_temp, best, worst] = get_special_agents(pop, 1, 1, problem->minmax);
@@ -206,11 +209,11 @@ void OriginalABC::check_problem(Problem* problem) {
     g_worst = nullptr;
 }
 
-Agent* OriginalABC::solve(Problem* problem, const std::vector<std::vector<double>>& starting_solutions) {
+Agent* OriginalABC::solve(Problem* problem) {
     check_problem(problem);
 
     initialize_variables();
-    initialization(starting_solutions);
+    initialization();
     after_initialization();
 
     // Boucle principale d'évolution

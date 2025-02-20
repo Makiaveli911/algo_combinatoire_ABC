@@ -1,0 +1,12 @@
+Fonction: rosenbrock, Dimension: 30, Exécution: 1, Fitness: 30389.6
+Fonction: rosenbrock, Dimension: 30, Exécution: 2, Fitness: 26272.9
+Fonction: rosenbrock, Dimension: 30, Exécution: 3, Fitness: 28536.3
+Fonction: rosenbrock, Dimension: 30, Exécution: 4, Fitness: 13885.5
+Fonction: rosenbrock, Dimension: 30, Exécution: 5, Fitness: 31559.6
+Fonction: rosenbrock, Dimension: 30, Exécution: 6, Fitness: 17829.3
+Fonction: rosenbrock, Dimension: 30, Exécution: 7, Fitness: 33323.3
+Fonction: rosenbrock, Dimension: 30, Exécution: 8, Fitness: 29287.6
+Fonction: rosenbrock, Dimension: 30, Exécution: 9, Fitness: 28471.5
+Fonction: rosenbrock, Dimension: 30, Exécution: 10, Fitness: 22807.2
+Fonction: rosenbrock, Dimension: 30, Fitness Moyenne sur 10 exécutions: 26236.3
+Fonction: rosenbrock, Dimension: 30, Écart Type sur 10 exécutions: 5919.36
