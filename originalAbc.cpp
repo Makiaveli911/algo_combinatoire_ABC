@@ -58,8 +58,11 @@ void OriginalABC::evolve(int epoch) {
     //par roulette (get_index_roulette_wheel_selection). Elles génèrent ensuite
     //de nouvelles solutions de manière similaire aux abeilles employées.
     std::vector<double> employed_fits;
+    //Cette boucle récupère les valeurs de fitness de chaque abeille employée.
+    //La fitness est une mesure de la qualité de la solution, en fonction du problème optimisé.
     for (auto* agent : pop) {
         employed_fits.push_back(agent->target->fitness());
+        //employed_fits contient donc la liste des performances de toutes les solutions de la population
     }
 
     for (int idx = 0; idx < pop_size; ++idx) {
@@ -300,11 +303,12 @@ int OriginalABC::get_index_roulette_wheel_selection(const std::vector<double>& l
         throw std::invalid_argument("list_fitness cannot be empty.");
     }
 
+    //On récupère les valeurs minimales et maximales des fitness pour l’étape suivante.
     std::vector<double> adjusted_fitness = list_fitness;
     double min_fitness = *std::min_element(adjusted_fitness.begin(), adjusted_fitness.end());
     double max_fitness = *std::max_element(adjusted_fitness.begin(), adjusted_fitness.end());
 
-    // Si tous les éléments sont égaux, retourner un index aléatoire
+    // Si toutes les solutions ont le même fitness, la roulette ne sert à rien, on choisit alors aléatoirement une solution
     if (min_fitness == max_fitness) {
         std::uniform_int_distribution<int> dist(0, adjusted_fitness.size() - 1);
         return dist(generator);
@@ -321,13 +325,13 @@ int OriginalABC::get_index_roulette_wheel_selection(const std::vector<double>& l
             val = max_fitness - val;
         }
     }
-    // Normaliser les probabilités
+    // calcule la probabilité de chaque solution
     double sum_fitness = std::accumulate(adjusted_fitness.begin(), adjusted_fitness.end(), 0.0);
     std::vector<double> probabilities;
     for (const auto& val : adjusted_fitness) {
         probabilities.push_back(val / sum_fitness);
     }
-    // Sélection par roulette
+    // tirage aléatoire qui sélectionne un élément en fonction des probabilités calculées précédemment.
     std::discrete_distribution<int> distribution(probabilities.begin(), probabilities.end());
     return distribution(generator);
 }

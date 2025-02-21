@@ -4,17 +4,9 @@
 
 #include "Agent.h"
 
-// Initialisation de l'identifiant statique
-int Agent::ID = 0;
-
 Agent::Agent(const std::vector<double>& solution,
              const Target* target)
-    : solution(solution),target(target),id(increase()) {}
-
-int Agent::increase() {
-    ID += 1;
-    return ID;
-}
+    : solution(solution),target(target) {}
 
 std::vector<double> Agent::get_solution() const {
     return solution;
