@@ -25,14 +25,13 @@ public:
     // Getter pour fitness
     double fitness() const;
 
-    // Setter pour weights (surcharge)
+    // Setter pour weights
     void set_weights(const std::vector<double>& weights);
 
     // Méthode pour calculer le fitness
     void calculate_fitness(const std::vector<double>& weights);
 
 private:
-    // Variables membres conservant exactement le même nom que dans votre code Python
     std::vector<double> _objectives;
     std::vector<double> _weights;
     double _fitness;

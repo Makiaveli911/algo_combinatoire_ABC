@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <random>
 
-// Constructeur avec un seul bound
 Problem::Problem(const std::vector<double>& lb,
                  const std::vector<double>& ub,
                  const std::string &minmax,

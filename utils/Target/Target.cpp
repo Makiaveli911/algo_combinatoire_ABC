@@ -19,8 +19,6 @@ void Target::set_objectives(const ObjectivesType& objs) {
         this->_objectives = { std::get<double>(objs) };
     } else if (std::holds_alternative<std::vector<double>>(objs)) {
         this->_objectives = std::get<std::vector<double>>(objs);
-    } else {
-        throw std::invalid_argument("Invalid objectives. It should be a vector<double> or double.");
     }
 }
 // Getter pour objectives
@@ -45,8 +43,5 @@ double Target::fitness() const {
 }
 // Méthode pour calculer le fitness
 void Target::calculate_fitness(const std::vector<double>& weights) {
-    if(_weights.size() != _objectives.size()){
-        throw std::invalid_argument("nombre de weight invalide ils correspondent pas");
-    }
     _fitness = std::inner_product(_objectives.begin(),_objectives.end(), _weights.begin(), 0.0);
 }
