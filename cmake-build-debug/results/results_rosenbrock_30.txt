@@ -1,12 +1,12 @@
-Fonction: rosenbrock, Dimension: 30, Exécution: 1, Fitness: 30389.6
-Fonction: rosenbrock, Dimension: 30, Exécution: 2, Fitness: 26272.9
-Fonction: rosenbrock, Dimension: 30, Exécution: 3, Fitness: 28536.3
-Fonction: rosenbrock, Dimension: 30, Exécution: 4, Fitness: 13885.5
-Fonction: rosenbrock, Dimension: 30, Exécution: 5, Fitness: 31559.6
-Fonction: rosenbrock, Dimension: 30, Exécution: 6, Fitness: 17829.3
-Fonction: rosenbrock, Dimension: 30, Exécution: 7, Fitness: 33323.3
-Fonction: rosenbrock, Dimension: 30, Exécution: 8, Fitness: 29287.6
-Fonction: rosenbrock, Dimension: 30, Exécution: 9, Fitness: 28471.5
-Fonction: rosenbrock, Dimension: 30, Exécution: 10, Fitness: 22807.2
-Fonction: rosenbrock, Dimension: 30, Fitness Moyenne sur 10 exécutions: 26236.3
-Fonction: rosenbrock, Dimension: 30, Écart Type sur 10 exécutions: 5919.36
+Fonction: rosenbrock, Dimension: 30, Execution: 1, Fitness: 29490.6
+Fonction: rosenbrock, Dimension: 30, Execution: 2, Fitness: 39633.9
+Fonction: rosenbrock, Dimension: 30, Execution: 3, Fitness: 32533.8
+Fonction: rosenbrock, Dimension: 30, Execution: 4, Fitness: 20579.4
+Fonction: rosenbrock, Dimension: 30, Execution: 5, Fitness: 11956.7
+Fonction: rosenbrock, Dimension: 30, Execution: 6, Fitness: 23243.6
+Fonction: rosenbrock, Dimension: 30, Execution: 7, Fitness: 41208.6
+Fonction: rosenbrock, Dimension: 30, Execution: 8, Fitness: 31966.9
+Fonction: rosenbrock, Dimension: 30, Execution: 9, Fitness: 35938.1
+Fonction: rosenbrock, Dimension: 30, Execution: 10, Fitness: 25335.9
+Fonction: rosenbrock, Dimension: 30, Fitness Moyenne sur 10 executions: 29188.7
+Fonction: rosenbrock, Dimension: 30, Ecart Type sur 10 executions: 8598.73
