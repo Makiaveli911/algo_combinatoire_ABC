@@ -1,14 +1,7 @@
-//
-// Created by chaid on 11/02/2025.
-//
-
 #ifndef AGENT_H
 #define AGENT_H
 
 #include <vector>
-#include <map>
-#include <string>
-#include <memory>
 #include "../Target/Target.h"
 
 class Agent {
@@ -21,13 +14,10 @@ public:
           const Target* target = new Target(0.0));
 
     std::vector<double> get_solution() const;
-
     void set_target(Target* new_target);
-
     const Target *get_target() const;
     // Retourne une copie de l'agent
     Agent copy() const;
-
     // Attributs
     std::vector<double> solution;
     const Target* target;

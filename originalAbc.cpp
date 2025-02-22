@@ -9,16 +9,16 @@
 #include <iostream>
 
 OriginalABC::OriginalABC(int epoch, int pop_size, int n_limits)
-    : n_limits(n_limits) {
-    this->epoch = epoch;
-    this->pop_size = pop_size;
-}
+    : n_limits(n_limits),pop_size(pop_size),epoch(epoch) {}
 
 OriginalABC::~OriginalABC() {}
 
+// Initialise les variables, notamment le compteur d'échecs pour chaque abeille
 void OriginalABC::initialize_variables() {
     trials.assign(pop_size, 0);
 }
+
+// Fonction principale qui exécute une itération complète de l'algorithme ABC
 void OriginalABC::evolve(int epoch) {
     std::uniform_real_distribution<double> uniform_dist(-1.0, 1.0);
     std::uniform_int_distribution<int> int_dist(0, pop_size - 1);
@@ -58,7 +58,7 @@ void OriginalABC::evolve(int epoch) {
     //par roulette (get_index_roulette_wheel_selection). Elles génèrent ensuite
     //de nouvelles solutions de manière similaire aux abeilles employées.
     std::vector<double> employed_fits;
-    //Cette boucle récupère les valeurs de fitness de chaque abeille employée.
+    //la boucle récupère les valeurs de fitness de chaque abeille employée.
     //La fitness est une mesure de la qualité de la solution, en fonction du problème optimisé.
     for (auto* agent : pop) {
         employed_fits.push_back(agent->target->fitness());
@@ -91,7 +91,7 @@ void OriginalABC::evolve(int epoch) {
         }
     }
 
-    // Phase des abeilles éclaireuses (Scout Bees)
+    // Phase des abeilles éclaireuses
     //Si une solution n'a pas été améliorée après un certain nombre d'essais (n_limits),
     //elle est remplacée par une nouvelle solution générée aléatoirement, simulant le
     //comportement des abeilles éclaireuses qui recherchent de nouvelles sources de nourriture.
@@ -102,7 +102,7 @@ void OriginalABC::evolve(int epoch) {
         }
     }
 }
-
+// Initialise la population avec des solutions aléatoires
 void OriginalABC::initialization(){
     pop.clear(); // Toujours vider la population avant d'initialiser
     pop.resize(pop_size);
@@ -110,16 +110,7 @@ void OriginalABC::initialization(){
         agent = generate_agent();
     }
 }
-// std::vector<Agent*> OriginalABC::generate_population(int pop_size) {
-//
-//     std::vector<Agent*> pop(pop_size);
-//
-//     for (auto& agent : pop) {
-//         agent = generate_agent();
-//     }
-//     return pop;
-// }
-
+// Génère un nouvel agent à partir d'une solution donnée ou aléatoire
 Agent* OriginalABC::generate_agent(const std::vector<double>& solution) {
     // Si la solution est vide, on en génère une nouvelle via `problem->generate_solution()`
     //sinon on l'utilise telle quelle
@@ -127,34 +118,32 @@ Agent* OriginalABC::generate_agent(const std::vector<double>& solution) {
     // Crée un nouvel Agent avec la solution et son Target associé
     return new Agent(final_solution, problem->get_target(final_solution));
 }
+
 Target* OriginalABC::get_target(const std::vector<double>& solution, bool counted) {
     if (counted) {
         nfe_counter++;
     }
     return problem->get_target(solution);
 }
-
-
+// Initialise les listes des meilleures et pires solutions trouvées
 void OriginalABC::after_initialization() {
     auto [pop_temp, best, worst] = get_special_agents(pop, 1, 1, problem->minmax);
     g_best = best[0];
     g_worst = worst[0];
 
     // Stocker les meilleures et pires solutions initiales
-    // store_initial_best_worst(*g_best, *g_worst);
-    // Stocker les meilleures et pires solutions initiales directement ici
     list_global_best = {best[0]->copy()};
     list_current_best = {best[0]->copy()};
     list_global_best_fit = {best[0]->target->fitness()};
     list_current_best_fit = {best[0]->target->fitness()};
-
     list_global_worst = {worst[0]->copy()};
     list_current_worst = {worst[0]->copy()};
 }
 
+// Fonction qui classe les agents en fonction de leur fitness et retourne les meilleurs et pires agents
 std::tuple<std::vector<Agent*>, std::vector<Agent*>, std::vector<Agent*>>
 OriginalABC::get_special_agents(std::vector<Agent*>& pop, int n_best, int n_worst, const std::string& minmax) {
-    std::vector<Agent*> sorted_pop = get_sorted_population(pop, minmax);
+    std::vector<Agent*> sorted_pop = get_sorted_population(pop);
 
     std::vector<Agent*> best_agents, worst_agents;
 
@@ -171,74 +160,41 @@ OriginalABC::get_special_agents(std::vector<Agent*>& pop, int n_best, int n_wors
     return {sorted_pop, best_agents, worst_agents};
 }
 
-std::vector<Agent*> OriginalABC::get_sorted_population(std::vector<Agent*>& pop, const std::string& minmax, bool return_index) {
-    std::vector<std::pair<double, Agent*>> fitness_pop;
-
-    // Associer les agents à leurs valeurs de fitness
-    for (Agent* agent : pop) {
-        fitness_pop.emplace_back(agent->target->fitness(), agent);
-    }
-
-    // Trier la population en fonction du type de problème (minimisation ou maximisation)
-    if (minmax == "max") {
-        std::sort(fitness_pop.begin(), fitness_pop.end(), [](const auto& a, const auto& b) {
-            return a.first > b.first;
-        });
-    } else {
-        std::sort(fitness_pop.begin(), fitness_pop.end(), [](const auto& a, const auto& b) {
-            return a.first < b.first;
-        });
-    }
-
-    // Extraire la population triée
-    std::vector<Agent*> sorted_pop;
-    std::vector<int> indices;
-    for (size_t i = 0; i < fitness_pop.size(); ++i) {
-        sorted_pop.push_back(fitness_pop[i].second);
-        indices.push_back(static_cast<int>(i));
-    }
-
-    if (return_index) {
-        return sorted_pop;  // Retourner uniquement les agents triés
-    } else {
-        return sorted_pop;
-    }
+std::vector<Agent*> OriginalABC::get_sorted_population(std::vector<Agent*>& pop) {
+    std::sort(pop.begin(), pop.end(), [&](Agent* a, Agent* b) {
+    return a->target->fitness() < b->target->fitness();
+});
+    return pop;
 }
+
 void OriginalABC::check_problem(Problem* problem) {
     this->problem = problem;
-    // generator.seed(seed);
     pop.clear();
     g_best = nullptr;
     g_worst = nullptr;
 }
 
+// Fonction qui exécute l'algorithme complet jusqu'à convergence
 Agent* OriginalABC::solve(Problem* problem) {
     check_problem(problem);
-
     initialize_variables();
     initialization();
     after_initialization();
-
     // Boucle principale d'évolution
     for (int epoch = 1; epoch <= this->epoch; ++epoch) {
         auto time_epoch_start = std::chrono::high_resolution_clock::now();
         evolve(epoch);
-
         // Mise à jour du meilleur agent global
         auto [pop_temp, best_agent] = update_global_best_agent(pop);
         g_best = best_agent;
-
         auto time_epoch_end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> time_epoch = time_epoch_end - time_epoch_start;
         list_epoch_time.push_back(time_epoch.count());
     }
-
-    // track_optimize_process();
     return g_best;
 }
-
 std::pair<std::vector<Agent*>, Agent*> OriginalABC::update_global_best_agent(std::vector<Agent*>& pop, bool save) {
-    std::vector<Agent*> sorted_pop = get_sorted_population(pop, problem->minmax);
+    std::vector<Agent*> sorted_pop = get_sorted_population(pop);
     Agent* c_best = sorted_pop.front();
     Agent* c_worst = sorted_pop.back();
 
@@ -270,7 +226,6 @@ std::pair<std::vector<Agent*>, Agent*> OriginalABC::update_global_best_agent(std
         return {sorted_pop, global_better};
     }
 }
-
 Agent* OriginalABC::get_better_agent(Agent* agent_x, Agent* agent_y, const std::string& minmax, bool reverse) {
     std::map<std::string, int> minmax_dict = {{"min", 0}, {"max", 1}};
     int idx = minmax_dict[minmax];
@@ -284,7 +239,6 @@ Agent* OriginalABC::get_better_agent(Agent* agent_x, Agent* agent_y, const std::
         return (agent_x->target->fitness() < agent_y->target->fitness()) ? new Agent(*agent_y) : new Agent(*agent_x);
     }
 }
-
 //Appelle la méthode correct_solution du problème pour ajuster la solution si nécessaire.
 //Retour de la solution corrigée.
 std::vector<double> OriginalABC::correct_solution(const std::vector<double>& solution) const {
@@ -302,7 +256,6 @@ int OriginalABC::get_index_roulette_wheel_selection(const std::vector<double>& l
     if (list_fitness.empty()) {
         throw std::invalid_argument("list_fitness cannot be empty.");
     }
-
     //On récupère les valeurs minimales et maximales des fitness pour l’étape suivante.
     std::vector<double> adjusted_fitness = list_fitness;
     double min_fitness = *std::min_element(adjusted_fitness.begin(), adjusted_fitness.end());
@@ -325,7 +278,6 @@ int OriginalABC::get_index_roulette_wheel_selection(const std::vector<double>& l
             val = max_fitness - val;
         }
     }
-    // calcule la probabilité de chaque solution
     double sum_fitness = std::accumulate(adjusted_fitness.begin(), adjusted_fitness.end(), 0.0);
     std::vector<double> probabilities;
     for (const auto& val : adjusted_fitness) {

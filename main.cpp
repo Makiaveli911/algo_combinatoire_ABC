@@ -7,7 +7,8 @@
 #include "utils/Agent/Agent.h"
 #include "utils/Target/Target.h"
 
-// --- La fonction objective_function telle que dans le script Python ---
+// Cette fonction calcule la somme des carrés des éléments d'une solution.
+// Plus cette somme est faible, meilleure est la solution (problème de minimisation).
 double objective_function(const std::vector<double>& solution) {
     double sum = 0.0;
     for (double x : solution) {
@@ -17,25 +18,27 @@ double objective_function(const std::vector<double>& solution) {
 }
 
 struct ProblemDict {
-    std::vector<double>& lb;
-    std::vector<double>& ub;
+    std::vector<double>& lb; // Bornes inférieures
+    std::vector<double>& ub;// Bornes supérieures
     std::string minmax;
     std::function<double(const std::vector<double>&)> obj_func;
 };
 
 int main() {
+    // Définition des bornes inférieures et supérieures pour une dimension de 30
     std::vector<double> lb(30,-10);
     std::vector<double> ub(30,10);
-    // --- Création du problem_dict exactement comme dans le script Python ---
+    // Création du problème avec les bornes et la fonction objectif
     Problem* problem= new Problem(lb,ub,"min",objective_function);
 
-    // --- Instanciation du modèle OriginalABC avec epoch=1000, pop_size=50, n_limits=50 ---
+    // Instanciation du modèle OriginalABC avec epoch=1000, pop_size=50, n_limits=50
     OriginalABC model(1000, 50, 50);
 
-    // --- Conversion du problem_dict en un objet Problem via MyProblem ---
+    // Lancement de l'algorithme ABC
+    // La méthode solve() exécute l'algorithme et retourne la meilleure solution trouvée.
     Agent* g_best = model.solve(problem);
 
-    // --- Affichage de la solution et de la fitness (g_best correspond à la variable Python g_best) ---
+    // Affichage des resultat
     std::cout << "Solution: ";
     for (double v : g_best->solution) {
         std::cout << v << " ";
